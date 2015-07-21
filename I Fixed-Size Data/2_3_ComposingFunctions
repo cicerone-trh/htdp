@@ -1,0 +1,33 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname 2_3_ComposingFunctions) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+(require 2htdp/batch-io)
+;; 2.3 Exercises 29-31 (& more)
+(define ticket-price 5)
+(define attend-at-price 120)
+(define price-change 0.10)
+(define attend-per-change 15)
+(define base-cost 0)
+(define cost-per-attend 1.5)
+
+(define (maximize-profit accuracy)
+  (find-max-profit accuracy ticket-price))
+(define (find-max-profit accuracy start-price)
+  ;; if raising it lowers profit
+  (if (>= (profit start-price) (profit (+ start-price accuracy)))
+      ;; and if lowering it lowers profit
+      (if (>= (profit start-price) (profit (- start-price accuracy)))
+          ;; you found your price
+          start-price
+          ;; but if lowering raises profits, keep going 
+          (find-max-profit accuracy (- start-price accuracy)))
+      ;; but if raising it raises profits, keep going
+      (find-max-profit accuracy (+ start-price accuracy))))
+(define (attendees new-price)
+  (- attend-at-price (* (/ (- new-price ticket-price) price-change) attend-per-change)))
+(define (revenue price)
+  (* price (attendees price)))
+(define (costs price)
+  (+ base-cost (* (attendees price) cost-per-attend)))
+(define (profit price)
+  (- (revenue price) (costs price)))
