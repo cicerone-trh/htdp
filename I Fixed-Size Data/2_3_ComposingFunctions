@@ -3,15 +3,17 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname 2_3_ComposingFunctions) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require 2htdp/batch-io)
 ;; 2.3 Exercises 29-31 (& more)
-(define ticket-price 5)
-(define attend-at-price 120)
-(define price-change 0.10)
-(define attend-per-change 15)
-(define base-cost 0)
-(define cost-per-attend 1.5)
+
+(define TICKET-PRICE 5)
+(define ATTENT-AT-PRICE 120)
+(define PRICE-CHANGE 0.10)
+(define ATTEND-PER-CHANGE 15)
+(define PRICE-SENSITIVITY (/ ATTEND-PER-CHANGE PRICE-CHANGE)) ;; 2.4 Exercise 32
+(define BASE-COST 0)
+(define COST-PER-ATTEND 1.5)
 
 (define (maximize-profit accuracy)
-  (find-max-profit accuracy ticket-price))
+  (find-max-profit accuracy TICKET-PRICE))
 (define (find-max-profit accuracy start-price)
   ;; if raising it lowers profit
   (if (>= (profit start-price) (profit (+ start-price accuracy)))
@@ -24,10 +26,10 @@
       ;; but if raising it raises profits, keep going
       (find-max-profit accuracy (+ start-price accuracy))))
 (define (attendees new-price)
-  (- attend-at-price (* (/ (- new-price ticket-price) price-change) attend-per-change)))
+  (- ATTENT-AT-PRICE (* (- new-price TICKET-PRICE) PRICE-SENSITIVITY)))
 (define (revenue price)
   (* price (attendees price)))
 (define (costs price)
-  (+ base-cost (* (attendees price) cost-per-attend)))
+  (+ BASE-COST (* (attendees price) COST-PER-ATTEND)))
 (define (profit price)
   (- (revenue price) (costs price)))
